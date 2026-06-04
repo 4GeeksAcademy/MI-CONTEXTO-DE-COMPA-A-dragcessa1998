@@ -1,0 +1,15 @@
+{
+  "name": "nexova-hito2-fundamentos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hito 2 — Capa de lógica en TypeScript para el motor de scoring y matching de candidatos de Nexova",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "demo": "tsx src/demo.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
