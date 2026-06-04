@@ -16,16 +16,24 @@ npm run typecheck  # tsc --noEmit
 
 ## Endpoints
 
+Todas las respuestas incluyen cabeceras **CORS** para que las apps de `uis/` (tracker, backoffice) puedan consumir la API desde el navegador.
+
 | Método | Ruta | Descripción | Lógica del Hito 2 |
 | --- | --- | --- | --- |
 | GET | `/health` | Estado y conteos | — |
 | GET | `/candidates?seniority=&availability=` | Lista/filtra candidatos | `filterCandidatesBySeniority`, `filterCandidatesByAvailability` |
 | GET | `/candidates/:id` | Candidato por ID | `findCandidateById` (búsqueda lineal) |
 | POST | `/candidates` | Alta de candidato (valida) | `validateCandidate` |
+| PUT | `/candidates/:id` | Reemplazo completo (valida) | `validateCandidate` |
+| PATCH | `/candidates/:id` | Actualización parcial (valida) | `validateCandidate` |
+| DELETE | `/candidates/:id` | Baja de candidato | — |
 | GET | `/vacancies` · `/vacancies/:id` | Vacantes | — |
 | POST | `/vacancies` | Alta de vacante (valida) | `validateVacancy` |
+| DELETE | `/vacancies/:id` | Baja de vacante | — |
 | GET | `/vacancies/:id/ranking` | **Ranking de candidatos** | `rankCandidatesForVacancy` (scoring 0-100) |
+| GET · POST | `/processes` | Procesos de selección | — |
 | GET | `/reports/summary` | Salario medio, conteo por estado, top skills | `calculateAverageSalary`, `countCandidatesByStatus`, `findTopSkills` |
+| GET | `/reports/fill-rate` | % de procesos terminados en "Hired" | `calculateVacancyFillRate` |
 
 ### Ejemplos
 
