@@ -19,10 +19,14 @@
 - `uis/website` y `uis/backoffice` tienen **layouts independientes**.
 - Cada rama de entrega incluye su propia copia de `/src` para que **compile de forma aislada**; se reconcilia al mergear los PRs en orden (**2 → 3 → 4 → 5**).
 
+## Integración full-stack (Hito 4 ↔ Hito 5)
+
+- **Backoffice conectado a la API real** ✅ — `uis/backoffice` ya NO importa la lógica del Hito 2 de forma estática: consume la **Nexova Talent API** en vivo por HTTP (con CORS). Cliente tipado en `src/lib/api.ts`; panel cliente en `src/components/Dashboard.tsx` (KPIs desde `/reports/*`, ranking desde `/vacancies/:id/ranking`, conteos, **alta de candidato** con validación 400 y **recálculo en vivo**, estados carga/error/sin-conexión). Solo reutiliza ya los **tipos** de `@logic`. `tsc --noEmit` limpio + `next build` OK. Verificado de punta a punta contra la API (GET reports/ranking, preflight OPTIONS 204, POST 201 / 400, summary y ranking cambian tras crear).
+
 ## Próximos pasos previstos
 
 - **Hito 6 — Telemetría** · **Hito 7 — RAG/memoria** · **Hito 8 — Agentes** · **Hito 9 — Workflows** · **Hito 10 — Tiempo real** (aún sin rúbrica publicada en el syllabus).
-- Posible mejora: conectar el tracker (Hito 3) y el backoffice (Hito 4) a la `services/talent-api` real (ya tiene CORS).
+- Posible mejora pendiente: conectar también el **tracker** (Hito 3) a la `services/talent-api` real.
 
 ## Tareas del usuario pendientes (no automatizables por el agente)
 
