@@ -13,6 +13,7 @@ import { STATUS_LABELS } from "@/lib/labels";
 import Kpi from "@/components/Kpi";
 import RankingTable, { type RankingRow } from "@/components/RankingTable";
 import AddCandidateForm from "@/components/AddCandidateForm";
+import ApiErrorState from "@/components/ApiErrorState";
 
 interface DashboardData {
   summary: SummaryResponse;
@@ -96,7 +97,7 @@ export default function Dashboard() {
       )}
 
       {state === "loading" && <LoadingState />}
-      {state === "error" && <ErrorState message={error} onRetry={load} />}
+      {state === "error" && <ApiErrorState message={error} onRetry={load} />}
       {state === "ready" && data && <DashboardContent data={data} />}
     </div>
   );
@@ -129,28 +130,6 @@ function LoadingState() {
       {Array.from({ length: 4 }).map((_, index) => (
         <div key={index} className="h-24 animate-pulse rounded-2xl border border-slate-200 bg-slate-200/60" />
       ))}
-    </div>
-  );
-}
-
-/** Estado de error con ayuda para arrancar la API. */
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6">
-      <h3 className="text-sm font-bold text-rose-800">No se pudo cargar el panel</h3>
-      <p className="mt-1 text-sm text-rose-700">{message}</p>
-      <div className="mt-4 rounded-lg bg-white/70 p-3 text-xs text-slate-600">
-        <p className="font-semibold text-slate-700">¿Está corriendo la API?</p>
-        <pre className="mt-1 overflow-x-auto">
-          <code>{`cd services/talent-api\nnpm install\nnpm run dev   # http://localhost:4000`}</code>
-        </pre>
-      </div>
-      <button
-        onClick={onRetry}
-        className="mt-4 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-rose-700"
-      >
-        Reintentar
-      </button>
     </div>
   );
 }

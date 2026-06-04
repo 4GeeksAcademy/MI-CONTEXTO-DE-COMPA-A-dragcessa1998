@@ -24,6 +24,12 @@ por HTTP (con CORS), demostrando el stack completo de punta a punta:
   panel **se recalcula al instante** (KPIs, ranking y conteos).
 - Estados de **carga / error / sin conexión** (con instrucciones para arrancar la API) y botón **Refrescar**.
 
+## Vista de procesos (`/processes`)
+
+Tablero (pipeline) de los **procesos de selección** agrupados por etapa, en vivo desde
+`GET /processes`. Mover a un candidato de etapa hace `PATCH /processes/:id` y recarga el
+tablero al instante. Las etiquetas de etapa se muestran en español (nunca el valor crudo).
+
 ## Ejecutar (API + backoffice)
 
 El panel necesita la API corriendo. En **dos terminales**:

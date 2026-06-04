@@ -32,6 +32,7 @@ Todas las respuestas incluyen cabeceras **CORS** para que las apps de `uis/` (tr
 | DELETE | `/vacancies/:id` | Baja de vacante | — |
 | GET | `/vacancies/:id/ranking` | **Ranking de candidatos** | `rankCandidatesForVacancy` (scoring 0-100) |
 | GET · POST | `/processes` | Procesos de selección | — |
+| PATCH | `/processes/:id` | Avanzar etapa / actualizar score o notas (valida `stage`) | — |
 | GET | `/reports/summary` | Salario medio, conteo por estado, top skills | `calculateAverageSalary`, `countCandidatesByStatus`, `findTopSkills` |
 | GET | `/reports/fill-rate` | % de procesos terminados en "Hired" | `calculateVacancyFillRate` |
 

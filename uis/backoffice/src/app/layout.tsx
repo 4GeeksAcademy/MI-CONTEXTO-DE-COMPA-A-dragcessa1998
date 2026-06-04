@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavLinks from "@/components/NavLinks";
 
 export const metadata: Metadata = {
   title: "Nexova — Backoffice",
   description: "Panel interno de Nexova: operación y métricas del banco de talento.",
 };
-
-const NAV = [
-  { label: "Panel", href: "/", active: true },
-  { label: "Candidatos", href: "/", active: false },
-  { label: "Vacantes", href: "/", active: false },
-  { label: "Procesos", href: "/", active: false },
-];
 
 /** Layout propio del backoffice (sidebar), distinto del layout público de website. */
 export default function BackofficeLayout({ children }: { children: React.ReactNode }) {
@@ -29,20 +23,7 @@ export default function BackofficeLayout({ children }: { children: React.ReactNo
               </div>
             </div>
             <nav className="mt-2 flex-1 px-3" aria-label="Navegación del backoffice">
-              <ul className="space-y-1">
-                {NAV.map((item, index) => (
-                  <li key={index}>
-                    <a
-                      href={item.href}
-                      className={`block rounded-lg px-3 py-2 text-sm font-medium ${
-                        item.active ? "bg-brand-600 text-white" : "text-slate-300 hover:bg-slate-800"
-                      }`}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <NavLinks />
             </nav>
             <p className="px-5 py-4 text-xs text-slate-500">Operaciones de Selección</p>
           </aside>

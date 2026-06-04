@@ -56,6 +56,18 @@ export interface ListResponse<T> {
   data: T[];
 }
 
+/** Proceso de selección tal y como lo devuelve la API (fechas serializadas como string). */
+export interface ProcessDto {
+  id: string;
+  candidateId: string;
+  vacancyId: string;
+  stage: string;
+  score: number;
+  notes: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** Extrae un mensaje legible del cuerpo de error de la API ({errors} o {error}). */
 function extractError(body: unknown): string | null {
   if (body && typeof body === "object") {
@@ -109,4 +121,7 @@ export const api = {
   getRanking: (vacancyId: string) => request<RankingResponse>(`/vacancies/${vacancyId}/ranking`),
   createCandidate: (payload: Record<string, unknown>) =>
     request<Candidate>("/candidates", { method: "POST", body: JSON.stringify(payload) }),
+  listProcesses: () => request<ListResponse<ProcessDto>>("/processes"),
+  patchProcess: (id: string, body: Record<string, unknown>) =>
+    request<ProcessDto>(`/processes/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
 };

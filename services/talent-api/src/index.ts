@@ -257,6 +257,28 @@ app.post("/processes", (req: Request, res: Response) => {
   res.status(201).json(process);
 });
 
+// PATCH /processes/:id  (avanzar etapa / actualizar score o notas)
+app.patch("/processes/:id", (req: Request, res: Response) => {
+  const index = processes.findIndex((item) => item.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: "Proceso no encontrado" });
+
+  const body = req.body ?? {};
+  if (body.stage !== undefined && !PROCESS_STAGES.includes(body.stage as ProcessStage)) {
+    return res.status(400).json({ errors: ["stage no es una etapa válida"] });
+  }
+
+  const current = processes[index]!;
+  const updated: SelectionProcess = {
+    ...current,
+    stage: (body.stage as ProcessStage) ?? current.stage,
+    score: body.score !== undefined ? Number(body.score) : current.score,
+    notes: body.notes !== undefined ? String(body.notes) : current.notes,
+    updatedAt: new Date(),
+  };
+  processes[index] = updated;
+  res.json(updated);
+});
+
 // ---------- Reportes ----------
 
 app.get("/reports/summary", (_req: Request, res: Response) => {
