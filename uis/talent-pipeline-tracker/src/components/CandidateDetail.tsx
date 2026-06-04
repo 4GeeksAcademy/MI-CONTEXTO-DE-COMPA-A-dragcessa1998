@@ -1,0 +1,104 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { getRecord } from "@/lib/api";
+import type { TrackerRecord } from "@/types/tracker";
+import { formatDate } from "@/lib/format";
+import { LoadingState, ErrorState, StatusBadge, StageBadge } from "./ui";
+import StatusStageControls from "./StatusStageControls";
+import NotesSection from "./NotesSection";
+
+/** Fila de un campo del candidato (etiqueta + valor o enlace). */
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
+      <dd className="mt-0.5 text-sm text-slate-900">{children}</dd>
+    </div>
+  );
+}
+
+export default function CandidateDetail({ id }: { id: string }) {
+  const [record, setRecord] = useState<TrackerRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchRecord = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setRecord(await getRecord(id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo cargar la candidatura");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchRecord();
+  }, [fetchRecord]);
+
+  if (loading) return <LoadingState label="Cargando candidatura…" />;
+  if (error) return <ErrorState message={error} onRetry={fetchRecord} />;
+  if (!record) return null;
+
+  return (
+    <div className="space-y-6">
+      <Link href="/" className="inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700">
+        ← Volver al listado
+      </Link>
+
+      <header className="rounded-xl border border-slate-200 bg-white p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">{record.full_name}</h1>
+            <p className="mt-1 text-slate-600">{record.position}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <StatusBadge value={record.status} />
+              <StageBadge value={record.stage} />
+            </div>
+          </div>
+          <Link
+            href={`/candidates/${record.id}/edit`}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Editar datos
+          </Link>
+        </div>
+
+        <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+          <Field label="Email">
+            <a className="text-brand-700 hover:underline" href={`mailto:${record.email}`}>{record.email}</a>
+          </Field>
+          <Field label="Teléfono">{record.phone}</Field>
+          <Field label="Años de experiencia">{record.experience_years}</Field>
+          <Field label="Fecha de aplicación">{formatDate(record.applied_at)}</Field>
+          <Field label="LinkedIn">
+            {record.linkedin_url ? (
+              <a className="text-brand-700 hover:underline" href={record.linkedin_url} target="_blank" rel="noopener noreferrer">
+                Ver perfil
+              </a>
+            ) : (
+              <span className="text-slate-400">—</span>
+            )}
+          </Field>
+          <Field label="CV">
+            {record.cv_url ? (
+              <a className="text-brand-700 hover:underline" href={record.cv_url} target="_blank" rel="noopener noreferrer">
+                Descargar CV
+              </a>
+            ) : (
+              <span className="text-slate-400">—</span>
+            )}
+          </Field>
+        </dl>
+      </header>
+
+      <StatusStageControls record={record} onUpdated={setRecord} />
+
+      <NotesSection recordId={record.id} />
+    </div>
+  );
+}
