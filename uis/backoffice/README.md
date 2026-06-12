@@ -30,6 +30,26 @@ Tablero (pipeline) de los **procesos de selección** agrupados por etapa, en viv
 `GET /processes`. Mover a un candidato de etapa hace `PATCH /processes/:id` y recarga el
 tablero al instante. Las etiquetas de etapa se muestran en español (nunca el valor crudo).
 
+## Vista de proveedores (`/suppliers`)
+
+**Directorio de Proveedores** de Nexova (proyecto *Supplier Directory — Lightweight Storage API*),
+en vivo desde la **Supplier API** (FastAPI + TinyDB, `services/api`, puerto `8000`,
+configurable con `NEXT_PUBLIC_SUPPLIERS_API_URL`):
+
+- Tabla con nombre, país, categorías (etiquetas en español), tarifa + moneda, renovación y estado.
+- **Filtros por país y categoría** vía query params de la API, sin recargar la página.
+- **Alta de proveedor** (`POST /suppliers`) con validación en cliente y errores **422** de Pydantic inline.
+- **Editar tarifa** inline (`PATCH /suppliers/:id/rate`) y **activar/suspender** (`PATCH /suppliers/:id/status`),
+  reflejados en la lista al instante con la respuesta de la API.
+- Distinción visual activo (verde) / suspendido (rojo + fila atenuada) y aviso de
+  **renovación de contrato en <60 días** (ámbar) o vencida (rojo).
+
+```bash
+cd services/api
+uv run seed                          # carga los 15 proveedores del CONTEXT
+uv run uvicorn main:app --port 8000
+```
+
 ## Ejecutar (API + backoffice)
 
 El panel necesita la API corriendo. En **dos terminales**:

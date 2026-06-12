@@ -25,9 +25,13 @@
 - **Backoffice conectado a la API real** ✅ — `uis/backoffice` ya NO importa la lógica del Hito 2 de forma estática: consume la **Nexova Talent API** en vivo por HTTP (con CORS). Cliente tipado en `src/lib/api.ts`; panel cliente en `src/components/Dashboard.tsx` (KPIs desde `/reports/*`, ranking desde `/vacancies/:id/ranking`, conteos, **alta de candidato** con validación 400 y **recálculo en vivo**, estados carga/error/sin-conexión). Solo reutiliza ya los **tipos** de `@logic`. `tsc --noEmit` limpio + `next build` OK. Verificado de punta a punta contra la API (GET reports/ranking, preflight OPTIONS 204, POST 201 / 400, summary y ranking cambian tras crear).
 - **Vista de Procesos (pipeline)** ✅ — backend: nuevo `PATCH /processes/:id` en la talent-api (avanzar etapa, valida `stage`). Frontend: `uis/backoffice` añade la ruta `/processes` (`PipelineBoard.tsx`) — tablero de procesos por etapa que mueve candidatos con `PATCH` y recarga en vivo; navegación lateral con `NavLinks` (resalta ruta activa) y `ApiErrorState` compartido. `tsc` limpio + `next build` OK (5 rutas). Verificado e2e: PATCH 200 + persistencia, stage inválido 400, id inexistente 404.
 
+## Proyecto avanzado: Supplier Directory (FastAPI) — oficial del syllabus
+
+- **Supplier Directory — Lightweight Storage API** ✅ — primer proyecto del track Python: `services/api` (**FastAPI + TinyDB + Pydantic**, gestionado con **uv**). Modelo `Supplier` calcado del CONTEXT oficial de Nexova (Spain/USA, 9 categorías, `active`/`suspended`, regla **moneda↔país**, `rate_updated_at` generado por el sistema). Seeder `uv run seed` idempotente con los 15 proveedores del CONTEXT. Endpoints: POST/GET(+filtros país/categoría)/GET:id/PATCH rate/PATCH status/DELETE, errores 404/422 consistentes, CORS. Frontend: página **/suppliers** del backoffice (tabla, filtros sin recarga, alta con 422 inline, tarifa inline, activar/suspender, badge de estado y aviso de renovación <60 días). Verificado: seeder ×2, 22 checks de endpoints con curl, persistencia tras reinicio, `tsc` + `next build` OK.
+
 ## Próximos pasos previstos
 
-- **Hito 6 — Telemetría** · **Hito 7 — RAG/memoria** · **Hito 8 — Agentes** · **Hito 9 — Workflows** · **Hito 10 — Tiempo real** (aún sin rúbrica publicada en el syllabus).
+- Track oficial Python/FastAPI restante: **#22-24 Autenticación** (JWT sobre la Supplier API → flujos frontend → reset de contraseña) · **#25 Incident Analyzer** (`incidents-nexova.csv`) · **#27 Architecture Proposal**.
 - Posible mejora pendiente: conectar también el **tracker standalone** (app del Hito 3) a la API real (el backoffice ya tiene su propia vista de pipeline en `/processes`).
 
 ## Tareas del usuario pendientes (no automatizables por el agente)
