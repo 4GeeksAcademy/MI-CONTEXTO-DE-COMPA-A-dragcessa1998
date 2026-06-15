@@ -111,7 +111,7 @@ export default function AddSupplierForm({
       {errors.length > 0 && (
         <ul className="mt-3 list-disc space-y-1 rounded-lg border border-rose-200 bg-rose-50 py-3 pl-8 pr-4 text-sm text-rose-700">
           {errors.map((message, index) => (
-            <li key={index}>{message}</li>
+            <li key={`${index}-${message}`}>{message}</li>
           ))}
         </ul>
       )}

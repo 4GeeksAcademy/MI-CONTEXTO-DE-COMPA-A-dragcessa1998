@@ -1,98 +1,122 @@
-# Proyecto de Compañía - Ingeniería de IA — Plantilla para estudiantes
+# Nexova — Proyecto de Compañía de Ingeniería de IA
 
 [![4Geeks Academy](https://img.shields.io/badge/4Geeks-Academy-blue)](https://4geeksacademy.com)
-[![AI Engineering](https://img.shields.io/badge/track-AI%20Engineering-green)](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia)
+[![track](https://img.shields.io/badge/track-AI%20Engineering-green)](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia)
 
-_Plantilla base para proyectos transversales del Programa de Carrera en Ingeniería de IA — 4Geeks Academy._
+Monorepo del **proyecto de compañía** del programa AI Engineering de 4Geeks Academy.
+La empresa elegida es **Nexova**, una consultoría de RR. HH. y adquisición de talento
+(Valencia + Miami). Reúne en un solo sitio todo lo construido durante el curso: la web
+pública, la lógica de negocio, el panel interno y las APIs.
 
-_Las instrucciones están [disponibles en inglés](./README.md)._
-
----
-
-## Propósito
-
-Este repositorio es la **plantilla de inicio** para los proyectos transversales. Trabajarás con escenarios de empresas reales (Brasaland, TrackFlow, Nexova) construyendo entregables que se corresponden con los hitos del curso (Web, Programación, Backend, Telemetría, RAG, Agentes, Workflows, Tiempo real).
-
-- Crea una plantilla a partir de este repositorio.
-- Reemplaza el `CONTEXT.md` placeholder por el contexto de tu empresa asignada.
-- Usa `skills/` y los `README.md` por carpeta como guía de trabajo.
+> _Versión en inglés: [README.md](./README.md)._
 
 ---
 
-## Estado actual de la plantilla
+## Estado del proyecto
 
-Actualmente el repositorio ofrece una **estructura base de carpetas y documentación**, pero todavía no incluye aplicaciones ejecutables ni scripts globales en la raíz.
+| Hito | Entregable | Estado |
+| --- | --- | --- |
+| 0 — Elige tu empresa | `company-choice.md` (Nexova) | ✅ |
+| 1 — Fundamentos web | Web pública estática (`index.html`, `application.html`) | ✅ |
+| 2 — Fundamentos de programación (TS) | Motor de scoring/matching en `src/` | ✅ |
+| 3 — Talent Pipeline Tracker | `uis/talent-pipeline-tracker` (Next.js) | ✅ |
+| 4 — Ingeniería impulsada por IA | Monorepo + `uis/website` + `uis/backoffice` | ✅ |
+| Supplier Directory (Lightweight Storage API) | `services/api` (FastAPI) + página `/suppliers` | ✅ |
 
-- `CONTEXT.md` es un placeholder y debe sustituirse por el contexto de la empresa asignada.
-- No existe todavía un `AGENTS.md` en la raíz.
-- Existe metadata del paquete compartido en `packages/shared/package.json` (`@repo/shared-types`), pero aún no hay runner de workspace en raíz.
+Extras sobre la base: **`services/talent-api`** (API de talento en Express/TS), la
+**integración en vivo** del backoffice con esa API y la **vista de procesos** (pipeline).
 
 ---
 
-## Estructura del repositorio
+## Arquitectura
 
-```text
-ai-engineering-company-project-monorepo/
-├── README.md
-├── README.es.md
-├── CONTEXT.md                # Placeholder a reemplazar con el contexto asignado
-├── agents/                   # Patrones/plantillas de agentes y documentación de tools
-├── data/                     # raw, process, pipelines, eval
-├── docs/                     # Documentación de proyecto y arquitectura
-├── infra/                    # Docker, Terraform, configuraciones de despliegue
-├── internal/                 # CLIs, scripts de migración empaquetados, utilidades internas
-├── mcps/                     # Servidores Model Context Protocol (MCP)
-├── packages/
-│   └── shared/               # Paquete compartido (@repo/shared-types)
-├── scripts/                  # Convenciones/documentación de scripts
-├── services/                 # APIs y workers en segundo plano
-├── shared/                   # Recursos/convenciones compartidas a nivel repo
-├── skills/                   # Skills reutilizables para agentes
-├── uis/                      # Interfaces de usuario (React, Next.js, Streamlit, HTML)
-└── workflows/                # Documentación de automatizaciones/orquestación
+```
+                          ┌──────────────────────────────┐
+                          │   uis/website  (Next.js)      │  Web pública de Nexova
+                          └──────────────────────────────┘
+
+   ┌──────────────────────────────┐        HTTP + CORS        ┌─────────────────────────┐
+   │  uis/backoffice  (Next.js)   │ ───────────────────────▶ │ services/api (FastAPI)   │
+   │  Panel interno               │   /suppliers             │ Supplier Directory       │
+   │  · /            (KPIs)       │                          │ TinyDB + Pydantic  :8000 │
+   │  · /processes   (pipeline)   │ ───────────────────────▶ ├─────────────────────────┤
+   │  · /suppliers   (directorio) │   /candidates /reports   │ services/talent-api      │
+   └──────────────────────────────┘                          │ Express + TS       :4000 │
+                  :3000                                       └────────────┬────────────┘
+                                                                           │ import @logic
+   ┌──────────────────────────────┐        API del curso                  ▼
+   │ uis/talent-pipeline-tracker  │ ──────────▶ playground.4geeks    ┌─────────────────┐
+   │ (Next.js)                    │                                  │  src/  (TS)     │
+   └──────────────────────────────┘                                  │  lógica Hito 2  │
+                                                                     │  fuente única   │
+                                                                     └─────────────────┘
 ```
 
----
-
-## Cómo empezar
-
-1. **Usa este repositorio como plantilla** y crea tu propio repo de proyecto.
-2. **Clona** tu repositorio (o ábrelo en Codespaces).
-3. **Reemplaza** `CONTEXT.md` con el contexto completo de tu empresa asignada.
-4. **Revisa** los `README.md` de cada carpeta raíz para entender responsabilidades (`uis/`, `services/`, `data/`, `skills/`, etc.).
-5. **Empieza a implementar** entregables por hito en `uis/` y `services/`, reutilizando `packages/shared/` y `data/` según corresponda.
+La **lógica de negocio** (tipos, scoring, validaciones) vive una sola vez en `src/` y se
+**importa** (alias TS `@logic`) desde el backoffice y la talent-api; nunca se copia.
 
 ---
 
-## Hitos (referencia)
+## Guía de directorios
 
-| Hito | Enfoque       | Entregables típicos                              |
-| ---- | ------------- | ------------------------------------------------ |
-| 0    | Prework       | Configuración del entorno, primeros prompts      |
-| 1    | Web           | Sitio corporativo, formularios, SEO              |
-| 2    | Programación  | Lógica de negocio, puntuación, cálculos          |
-| 3    | UI con IA     | Interfaces generadas con IA                      |
-| 4    | Next.js       | Portales, app de fidelización, UI de operaciones |
-| 5    | Backend       | API central (ubicaciones, menús, ventas, etc.)   |
-| 6    | Telemetría    | Pipeline de datos, dashboards                    |
-| 7    | RAG y memoria | Base de conocimiento semántica, búsqueda         |
-| 8    | Agentes       | Agentes de soporte, onboarding, formación        |
-| 9    | Workflows     | Automatizaciones con n8n                         |
-| 10   | Tiempo real   | Dashboards en vivo, alertas, streaming           |
-
----
-
-## Enlaces
-
-- [4Geeks Academy — Ingeniería de IA](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia)
-- [Cómo empezar un proyecto de código](https://4geeks.com/lesson/how-to-start-a-project)
+| Carpeta | Qué contiene |
+| --- | --- |
+| `src/` | Lógica de negocio compartida en TypeScript (Hito 2): tipos de dominio, motor de scoring, búsquedas, validaciones, datos de ejemplo. **Fuente única**, se importa vía `@logic`. |
+| `uis/website/` | Web pública de Nexova en Next.js (Hito 4). |
+| `uis/backoffice/` | Panel interno (Next.js): KPIs/ranking, pipeline de procesos y directorio de proveedores. Consume las APIs en vivo. |
+| `uis/talent-pipeline-tracker/` | Tracker de candidatos (Hito 3) sobre la API del curso. |
+| `services/api/` | **Supplier Directory API** — FastAPI + TinyDB + Pydantic, gestionada con `uv`. |
+| `services/talent-api/` | API de talento (candidatos/vacantes/procesos/reportes) en Express + TS. |
+| `memory-bank/` | Banco de memoria del proyecto (estado, contexto técnico, brief). |
+| `.agents/` | Reglas y skills para el trabajo asistido por IA (Hito 4). |
+| `index.html`, `application.html`, `validation.js` | Web estática original del Hito 1. |
+| `agents/`, `data/`, `packages/`, `scripts/`, `infra/`, … | Andamiaje del monorepo (plantilla de 4Geeks); cada carpeta trae un `README.md` con su propósito para futuros hitos. |
 
 ---
 
-## Contribuidores
+## Puesta en marcha
 
-Esta plantilla fue creada como parte del Programa de Carrera de Ingeniería de IA de 4Geeks Academy por [@marcogonzalo](https://www.linkedin.com/in/marcogonzalo) y [@alezanchezr](https://x.com/alesanchezr), junto a otros muchos colaboradores. Descubre más sobre nuestro [Curso de Ingeniería de IA](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia) y sobre [otros cursos](https://4geeksacademy.com/es/comparar-programas).
+Cada pieza se levanta por separado (los puertos son los que esperan las demás).
 
-Puedes encontrar otras plantillas y recursos similares en la [página de GitHub de 4Geeks Academy](https://github.com/4geeksacademy).
+```bash
+# Lógica compartida (Hito 2) — typecheck y demo
+npm install
+npm run typecheck
+npm run demo
 
-_Esta plantilla la mantiene 4Geeks Academy para el track de Ingeniería de IA. Uso exclusivo del programa._
+# Supplier Directory API (FastAPI, puerto 8000) — requiere uv
+cd services/api
+uv run seed                          # carga los 15 proveedores del CONTEXT (idempotente)
+uv run uvicorn main:app --port 8000  # Swagger UI en http://localhost:8000/docs
+
+# Talent API (Express, puerto 4000)
+cd services/talent-api
+npm install
+npm run dev
+
+# Backoffice (Next.js, puerto 3000) — consume las dos APIs anteriores
+cd uis/backoffice
+npm install
+npm run dev
+
+# Web pública y tracker (cada una en su carpeta)
+cd uis/website                 && npm install && npm run dev
+cd uis/talent-pipeline-tracker && npm install && npm run dev
+```
+
+> El backoffice usa `NEXT_PUBLIC_API_URL` (talent-api, por defecto `:4000`) y
+> `NEXT_PUBLIC_SUPPLIERS_API_URL` (supplier API, por defecto `:8000`). Si una API no está
+> arrancada, la vista muestra un estado de error con el comando para levantarla.
+
+---
+
+## Convenciones y documentación
+
+- [`AGENTS.md`](./AGENTS.md) — flujo de trabajo, zonas protegidas y dónde va cada cosa.
+- [`CONTEXT.md`](./CONTEXT.md) — briefing de la empresa (Nexova).
+- [`memory-bank/progress.md`](./memory-bank/progress.md) — estado detallado y próximos pasos.
+- [`.agents/rules/monorepo-conventions.md`](./.agents/rules/monorepo-conventions.md) — convenciones del monorepo.
+
+---
+
+_Construido como parte de los Coding Bootcamps de [4Geeks Academy](https://4geeksacademy.com)._

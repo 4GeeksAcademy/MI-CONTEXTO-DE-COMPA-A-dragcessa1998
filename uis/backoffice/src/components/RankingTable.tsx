@@ -15,10 +15,10 @@ export default function RankingTable({ rows }: { rows: RankingRow[] }) {
       <table className="w-full text-left text-sm">
         <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
           <tr>
-            <th className="px-4 py-3">Candidato</th>
-            <th className="px-4 py-3">Seniority</th>
-            <th className="px-4 py-3">Salario esp.</th>
-            <th className="px-4 py-3 w-48">Match</th>
+            <th scope="col" className="px-4 py-3">Candidato</th>
+            <th scope="col" className="px-4 py-3">Seniority</th>
+            <th scope="col" className="px-4 py-3">Salario esp.</th>
+            <th scope="col" className="px-4 py-3 w-48">Match</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">

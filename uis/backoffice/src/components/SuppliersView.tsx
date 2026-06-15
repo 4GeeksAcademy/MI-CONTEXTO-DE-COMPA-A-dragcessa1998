@@ -138,7 +138,7 @@ export default function SuppliersView() {
       </div>
 
       {actionError && (
-        <p className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
+        <p role="alert" aria-live="polite" className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">
           {actionError}
         </p>
       )}
@@ -190,13 +190,13 @@ function SuppliersTable({
       <table className="w-full text-left text-sm">
         <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
           <tr>
-            <th className="px-4 py-3">Proveedor</th>
-            <th className="px-4 py-3">País</th>
-            <th className="px-4 py-3">Categorías</th>
-            <th className="px-4 py-3">Tarifa mensual</th>
-            <th className="px-4 py-3">Renovación</th>
-            <th className="px-4 py-3">Estado</th>
-            <th className="px-4 py-3 text-right">Acciones</th>
+            <th scope="col" className="px-4 py-3">Proveedor</th>
+            <th scope="col" className="px-4 py-3">País</th>
+            <th scope="col" className="px-4 py-3">Categorías</th>
+            <th scope="col" className="px-4 py-3">Tarifa mensual</th>
+            <th scope="col" className="px-4 py-3">Renovación</th>
+            <th scope="col" className="px-4 py-3">Estado</th>
+            <th scope="col" className="px-4 py-3 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
