@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/nexova.png" alt="Nexova — Proyecto de Compañía de Ingeniería de IA" width="100%" />
+</p>
+
 # Nexova — Proyecto de Compañía de Ingeniería de IA
 
 [![4Geeks Academy](https://img.shields.io/badge/4Geeks-Academy-blue)](https://4geeksacademy.com)
