@@ -9,6 +9,7 @@ Herramienta interna del equipo de **People & Talent de Nexova** para gestionar l
 - **Detalle** (`/candidates/[id]`) con todos los campos; permite **cambiar estado y etapa** (`PATCH`).
 - **Notas internas**: listar, añadir y eliminar (`GET/POST/DELETE /records/:id/notes`).
 - **Alta** de candidaturas (`/candidates/new`, `POST`) y **edición** (`/candidates/[id]/edit`, `PUT`) con validación.
+- **Borrado** de candidaturas (`DELETE /records/:id`) desde el detalle, con confirmación previa. Completa el CRUD de records (Create/Read/Update/Delete).
 - Estados de **carga / éxito / error** visibles en cada operación asíncrona.
 
 ## Cómo ejecutar

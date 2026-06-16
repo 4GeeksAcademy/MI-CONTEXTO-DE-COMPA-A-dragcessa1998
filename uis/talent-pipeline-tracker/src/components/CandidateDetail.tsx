@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { getRecord } from "@/lib/api";
+import { useRouter } from "next/navigation";
+import { deleteRecord, getRecord } from "@/lib/api";
 import type { TrackerRecord } from "@/types/tracker";
 import { formatDate } from "@/lib/format";
 import { LoadingState, ErrorState, StatusBadge, StageBadge } from "./ui";
@@ -20,9 +21,15 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export default function CandidateDetail({ id }: { id: string }) {
+  const router = useRouter();
   const [record, setRecord] = useState<TrackerRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Estado del borrado de la candidatura (DELETE /records/:id).
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchRecord = useCallback(async () => {
     setLoading(true);
@@ -39,6 +46,20 @@ export default function CandidateDetail({ id }: { id: string }) {
   useEffect(() => {
     fetchRecord();
   }, [fetchRecord]);
+
+  async function handleDelete() {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteRecord(id);
+      // Vuelve al listado y fuerza un refetch para que la candidatura ya no aparezca.
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "No se pudo eliminar la candidatura");
+      setDeleting(false);
+    }
+  }
 
   if (loading) return <LoadingState label="Cargando candidatura…" />;
   if (error) return <ErrorState message={error} onRetry={fetchRecord} />;
@@ -60,13 +81,57 @@ export default function CandidateDetail({ id }: { id: string }) {
               <StageBadge value={record.stage} />
             </div>
           </div>
-          <Link
-            href={`/candidates/${record.id}/edit`}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-          >
-            Editar datos
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/candidates/${record.id}/edit`}
+              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Editar datos
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmingDelete(true);
+                setDeleteError(null);
+              }}
+              className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+            >
+              Eliminar
+            </button>
+          </div>
         </div>
+
+        {confirmingDelete && (
+          <div role="alertdialog" aria-label="Confirmar eliminación" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm font-medium text-red-800">
+              ¿Eliminar la candidatura de {record.full_name}? Esta acción no se puede deshacer.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+              >
+                {deleting ? "Eliminando…" : "Sí, eliminar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deleting}
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {deleteError && (
+          <p role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {deleteError}
+          </p>
+        )}
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
           <Field label="Email">

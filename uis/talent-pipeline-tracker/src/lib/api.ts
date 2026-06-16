@@ -90,6 +90,13 @@ export function patchRecord(id: string, input: RecordPatchInput): Promise<Tracke
   });
 }
 
+/** DELETE /records/:id (elimina la candidatura por completo) */
+export function deleteRecord(id: string): Promise<void> {
+  return request<void>(`/records/${id}`, {
+    method: "DELETE",
+  });
+}
+
 /** GET /records/:id/notes */
 export async function listNotes(id: string): Promise<Note[]> {
   const response = await request<NotesListResponse>(`/records/${id}/notes`);
